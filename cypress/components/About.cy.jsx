@@ -7,7 +7,7 @@ describe('<About />', () => {
     cy.mount(<About />).then(() => {
       cy.get('h1').should('contain', 'Acerca de nosotros');
       cy.get('#info')
-        .should('contain', 'Somos el equipo nº')
+        .should('contain', 'Equipo #')
         .contains(/[1-30]/);
     });
   });
