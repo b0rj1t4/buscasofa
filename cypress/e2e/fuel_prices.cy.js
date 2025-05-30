@@ -1,10 +1,14 @@
 describe('Visualización de precios de combustibles en gasolineras españolas', () => {
   beforeEach(() => {
+    cy.intercept('GET', '**/EstacionesTerrestres/**', {
+      fixture: '../fuel_prices.json', // Mock de la respuesta de la API
+    }).as('getFuelPrices');
     cy.visit('/lista');
   });
 
   it('El usuario ve el componente de precios de combustibles', () => {
-    cy.contains('Precios de combustibles').should('exist');
+    //La api tarda demasiado en cargar
+    cy.contains('Precios de combustibles', { timeout: 10000 }).should('exist');
   });
 
   it('La aplicación muestra una tabla con los precios de varias gasolineras', () => {
@@ -16,7 +20,9 @@ describe('Visualización de precios de combustibles en gasolineras españolas', 
   });
 
   it('La aplicación muestra un mensaje de error si la API falla', () => {
-    cy.intercept('GET', '**/EstacionesTerrestres/**', { statusCode: 500 }).as('getFuelPricesError');
+    cy.intercept('GET', '**/EstacionesTerrestres/**', { statusCode: 500 }).as(
+      'getFuelPricesError'
+    );
     cy.visit('/');
     cy.wait('@getFuelPricesError');
     cy.contains('Error').should('exist');
@@ -26,13 +32,15 @@ describe('Visualización de precios de combustibles en gasolineras españolas', 
     cy.intercept('GET', '**/EstacionesTerrestres/**').as('getFuelPrices');
     cy.visit('/');
     cy.wait('@getFuelPrices');
-    cy.get('tbody tr').first().within(() => {
-      cy.get('td').eq(0).should('not.be.empty'); // Nombre
-      cy.get('td').eq(1).should('not.be.empty'); // Dirección
-      cy.get('td').eq(2).should('not.be.empty'); // Municipio
-      cy.get('td').eq(3).should('not.be.empty'); // Gasóleo A
-      cy.get('td').eq(4).should('not.be.empty'); // Gasolina 95 E5
-    });
+    cy.get('tbody tr')
+      .first()
+      .within(() => {
+        cy.get('td').eq(0).should('not.be.empty'); // Nombre
+        cy.get('td').eq(1).should('not.be.empty'); // Dirección
+        cy.get('td').eq(2).should('not.be.empty'); // Municipio
+        cy.get('td').eq(3).should('not.be.empty'); // Gasóleo A
+        cy.get('td').eq(4).should('not.be.empty'); // Gasolina 95 E5
+      });
   });
 
   it('El usuario ve un mensaje de "Cargando precios..." mientras se descargan los datos', () => {
