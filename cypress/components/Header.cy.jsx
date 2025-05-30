@@ -1,5 +1,4 @@
 /// <reference types="Cypress" />
-// import React from 'react'
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../../src/components/Header';
 
