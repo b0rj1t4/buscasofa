@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchFuelPrices } from './apis/fuelApiLib';
-import { FuelApi } from './apis/FuelApi';
 
 import Header from './components/Header';
 import FuelMap from './components/FuelMap';
@@ -16,6 +15,7 @@ import Login from './components/Login';
 import Footer from './components/Footer';
 import { NotFound } from './NotFound';
 import Perfil from './components/Perfil';
+import Emergency from './components/Emergency';
 
 // Componente principal de la aplicación
 // Este componente es el punto de entrada de la aplicación y se encarga de gestionar las rutas y el estado global de la aplicación.
@@ -45,19 +45,6 @@ function App() {
       });
   }, []);
 
-  /*   useEffect(() => {
-    FuelApi.getInstance().getFuelPrices()
-      .then(data => {
-        console.log(data);
-        setStations(data.ListaEESSPrecio);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []); */
-
   return (
     <BrowserRouter>
       <Header user={user} />
@@ -68,6 +55,10 @@ function App() {
           <Route path="/registro" element={<Register />} />
           <Route path="/login" element={<Login onLogin={setUser} />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route
+            path="/emergency"
+            element={<Emergency stations={stations} />}
+          />
           <Route path="/about" element={<About />} />
           <Route path="/" element={<Home stations={stations} />} />
           <Route path="/mapa" element={<FuelMap stations={stations} />} />

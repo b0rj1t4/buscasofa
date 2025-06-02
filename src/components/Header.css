@@ -1,26 +1,25 @@
 @import '../styles/variables.css';
 
 header {
-    background: var(--dark-blue);
-    color: var(--primary-blue);
-    padding: 1rem 0;
-    margin-bottom: 1rem;
-    height: 3rem;
-    
+  background: var(--dark-blue);
+  color: var(--primary-blue);
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+  height: 3rem;
 }
 
 nav a {
-    vertical-align: middle;
-    padding: 10px;
-    color: var(--light-blue);
-    margin-right: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    transition: color 0.2s;
+  vertical-align: middle;
+  padding: 10px;
+  color: var(--light-blue);
+  margin-right: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 nav a:hover {
-    color: var(--yellow);
+  color: var(--yellow);
 }
 
 button {
@@ -35,5 +34,18 @@ button {
 
 button:hover {
   background: var(--yellow);
+  color: var(--dark-gray);
+}
+
+.emergency {
+  background: var(--red);
+  color: var(--white);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.emergency:hover {
+  background: var(--red-light);
   color: var(--dark-gray);
 }

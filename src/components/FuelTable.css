@@ -13,16 +13,23 @@
   padding: 0.75rem;
 }
 
-td, th {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 150px;
+td,
+th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
 }
 
 .fuel-table td {
   padding: 0.5rem;
   border-bottom: 1px solid var(--light-gray);
+}
+
+.fuel-table td:nth-child(4),
+td:nth-child(5),
+td:last-child {
+  text-align: center;
 }
 
 .fuel-table tr:hover {
