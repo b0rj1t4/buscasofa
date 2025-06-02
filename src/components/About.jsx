@@ -25,8 +25,8 @@ const About = () => {
     },
     {
       name: 'Alberto Flores Rivera',
-      location: 'Seville, Spain',
-      quote: '"Simplicity is the ultimate sophistication"',
+      location: 'Madrid, Spain',
+      quote: '"I really enjoy working with cloud/on-premise infrastructure and Kubernetes!! :)"',
       image:
         'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=200',
     },
