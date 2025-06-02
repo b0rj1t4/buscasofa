@@ -6,7 +6,6 @@ import './FuelTable.css';
 const PAGE_SIZE = 20;
 
 const FuelTable = ({ stations }) => {
-
   // Filtros
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -19,10 +18,9 @@ const FuelTable = ({ stations }) => {
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
 
-
   // Provincias y ciudades únicas
   const provinces = useMemo(
-    () => Array.from(new Set(stations.map(s => s.Provincia))).sort(),
+    () => Array.from(new Set(stations.map((s) => s.Provincia))).sort(),
     [stations]
   );
   const cities = useMemo(
@@ -30,8 +28,10 @@ const FuelTable = ({ stations }) => {
       Array.from(
         new Set(
           stations
-            .filter(s => !selectedProvince || s.Provincia === selectedProvince)
-            .map(s => s.Municipio)
+            .filter(
+              (s) => !selectedProvince || s.Provincia === selectedProvince
+            )
+            .map((s) => s.Municipio)
         )
       ).sort(),
     [stations, selectedProvince]
@@ -39,25 +39,29 @@ const FuelTable = ({ stations }) => {
 
   // Filtrado
   const filteredStations = useMemo(() => {
-    return stations.filter(station => {
-      const matchProvince = !selectedProvince || station.Provincia === selectedProvince;
+    return stations.filter((station) => {
+      const matchProvince =
+        !selectedProvince || station.Provincia === selectedProvince;
       const matchCity = !selectedCity || station.Municipio === selectedCity;
       const matchFuel =
         !selectedFuel ||
-        (station[selectedFuel] && station[selectedFuel].replace(',', '.') !== '' && station[selectedFuel] !== '-');
+        (station[selectedFuel] &&
+          station[selectedFuel].replace(',', '.') !== '' &&
+          station[selectedFuel] !== '-');
       return matchProvince && matchCity && matchFuel;
     });
   }, [stations, selectedProvince, selectedCity, selectedFuel]);
 
   // Ordenación
   const sortedStations = useMemo(() => {
-    if (!selectedFuel) return filteredStations;
+    if (!sortField) return filteredStations;
+
     return [...filteredStations].sort((a, b) => {
       const aVal = parseFloat((a[sortField] || '0').replace(',', '.')) || 0;
       const bVal = parseFloat((b[sortField] || '0').replace(',', '.')) || 0;
       return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
     });
-  }, [filteredStations, sortField, sortOrder, selectedFuel]);
+  }, [filteredStations, sortField, sortOrder]);
 
   // Paginación
   const totalPages = Math.ceil(sortedStations.length / PAGE_SIZE);
@@ -68,19 +72,17 @@ const FuelTable = ({ stations }) => {
 
   // Cambiar orden
   const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortOrder('asc');
-    }
+    setSortOrder((prevOrder) =>
+      sortField === field ? (prevOrder === 'asc' ? 'desc' : 'asc') : 'asc'
+    );
+    setSortField(field);
+    console.log(`Ordenado por: ${field} en ${sortOrder}`);
   };
 
   // Reset página al cambiar filtros
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedProvince, selectedCity, selectedFuel]);
-
 
   return (
     <div>
@@ -106,7 +108,12 @@ const FuelTable = ({ stations }) => {
                 className="sortable"
                 onClick={() => handleSort('Precio Gasoleo A')}
               >
-                Gasóleo A {sortField === 'Precio Gasoleo A' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                Gasóleo A{' '}
+                {sortField === 'Precio Gasoleo A'
+                  ? sortOrder === 'asc'
+                    ? '▲'
+                    : '▼'
+                  : ''}
               </button>
             </th>
             <th>
@@ -114,7 +121,12 @@ const FuelTable = ({ stations }) => {
                 className="sortable"
                 onClick={() => handleSort('Precio Gasolina 95 E5')}
               >
-                Gasolina 95 E5 {sortField === 'Precio Gasolina 95 E5' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                Gasolina 95 E5{' '}
+                {sortField === 'Precio Gasolina 95 E5'
+                  ? sortOrder === 'asc'
+                    ? '▲'
+                    : '▼'
+                  : ''}
               </button>
             </th>
             <th>Detalle</th>
@@ -132,7 +144,7 @@ const FuelTable = ({ stations }) => {
                 <Link
                   to={`/station/${station.IDEESS}`}
                   state={{
-                    gobackLink: "/lista"
+                    gobackLink: '/lista',
                   }}
                 >
                   Ver detalle
@@ -147,16 +159,25 @@ const FuelTable = ({ stations }) => {
         <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
           {'<<'}
         </button>
-        <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>
+        <button
+          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
           {'<'}
         </button>
         <span>
           Página {currentPage} de {totalPages}
         </span>
-        <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+        <button
+          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
           {'>'}
         </button>
-        <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+        <button
+          onClick={() => setCurrentPage(totalPages)}
+          disabled={currentPage === totalPages}
+        >
           {'>>'}
         </button>
       </div>
