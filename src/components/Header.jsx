@@ -9,10 +9,6 @@ function Header({ user }) {
     // Lógica de cierre de sesión
     console.log('Cerrar sesión');
   };
-  const handleLogin = () => {
-    // Lógica de inicio de sesión
-    console.log('Iniciar sesión');
-  };
 
   return (
     <header>
@@ -29,6 +25,14 @@ function Header({ user }) {
         </Link>
         <Link className="about" to="/about">
           Acerca de nosotros
+        </Link>
+
+        <Link
+          className="emergency"
+          to="/emergency"
+          style={{ marginLeft: '1rem' }}
+        >
+          Emergencia
         </Link>
 
         <span
