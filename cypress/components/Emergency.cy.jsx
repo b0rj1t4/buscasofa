@@ -1,55 +1,76 @@
 /// <reference types="Cypress" />
 import Emergency from '../../src/components/Emergency';
-import { stations } from '../fixtures/stations.json';
 
 describe('<Emergency />', () => {
-  it('renders without crashing', () => {
-    cy.mount(<Emergency stations={stations} />).then(() => {
-      cy.get('h1').should('contain', 'Estaciones de Emergencia');
-      cy.get('#postal-form').should('exist');
-      cy.get('#postal-code-input').should('exist');
-      cy.get('#search-button').should('exist');
-    });
+  const mockStations = [
+    {
+      IDEESS: '1234',
+      Rótulo: 'Gasolinera 1',
+      Latitud: '40.4167',
+      'Longitud (WGS84)': '-3.70325',
+      Dirección: 'Calle Mayor 1',
+      Municipio: 'Madrid',
+      Horario: 'L-V: 08:00-21:00',
+      'Precio Gasoleo A': '1.50',
+      'Precio Gasolina 95 E5': '1.60',
+    },
+    {
+      IDEESS: '5678',
+      Rótulo: 'Gasolinera 2',
+      Latitud: '40.4200',
+      'Longitud (WGS84)': '-3.70500',
+      Dirección: 'Calle Menor 2',
+      Municipio: 'Madrid',
+      Horario: '24H',
+      'Precio Gasoleo A': '1.55',
+    },
+  ];
+
+  beforeEach(() => {
+    cy.mount(<Emergency stations={mockStations} />);
   });
 
-  it('shows error message when geolocation is not supported', () => {
-    cy.stub(navigator, 'geolocation').value(null);
-    cy.mount(<Emergency stations={stations} />);
-    cy.get('#error-message').should(
-      'contain',
-      'Tu navegador no soporta geolocalización'
-    );
-  });
-
-  it('shows error message when geolocation fails', () => {
-    cy.stub(navigator.geolocation, 'getCurrentPosition').callsFake(
-      (success, error) => {
-        error({ message: 'Geolocation error' });
+  it('muestra las gasolineras más cercanas', () => {
+    cy.stub(window.navigator.geolocation, 'getCurrentPosition').callsFake(
+      (cb) => {
+        cb({
+          coords: {
+            latitude: 40.4168,
+            longitude: -3.7038,
+          },
+        });
       }
     );
-    cy.mount(<Emergency stations={stations} />);
-    cy.get('#error-message').should(
-      'contain',
-      'Error al obtener ubicación: Geolocation error'
-    );
+    cy.contains('h2', 'Gasolineras más cercanas').should('be.visible');
+
+    cy.get('.station-card').should('have.length', 2);
+
+    cy.get('.station-card')
+      .first()
+      .within(() => {
+        cy.contains('Gasolinera 1');
+        cy.contains(/Distancia:/);
+        cy.contains(/Dirección:/);
+        cy.contains(/Horario:/);
+        cy.contains(/Gasóleo A:/);
+        cy.contains(/Gasolina 95 E5:/);
+      });
   });
 
-  it('calculates distances and displays nearby stations', () => {
-    const userLocation = { lat: -34.6037, lng: -58.3816 }; // Buenos Aires
-    cy.stub(navigator.geolocation, 'getCurrentPosition').callsFake(
-      (success) => {
-        success({
-          coords: { latitude: userLocation.lat, longitude: userLocation.lng },
+  it('muestra el formulario de código postal si falla la geolocalización', () => {
+    // Simula que geolocalización falla
+    cy.stub(window.navigator.geolocation, 'getCurrentPosition').callsFake(
+      (success, error) => {
+        error({
+          code: 1,
+          message: 'Permiso denegado',
         });
       }
     );
 
-    cy.mount(<Emergency stations={stations} />);
-
-    // Esperar a que se calculen las distancias
-    cy.wait(1000);
-
-    // Verificar que se muestren estaciones cercanas
-    cy.get('.station-item').should('have.length.greaterThan', 0);
+    cy.mount(<Emergency stations={mockStations} />);
+    cy.contains('Ingresa tu código postal').should('be.visible');
+    cy.get('input[placeholder="Ej: 28001"]').should('be.visible');
+    cy.get('button[type="submit"]').should('be.visible');
   });
 });
