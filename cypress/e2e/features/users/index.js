@@ -1,14 +1,18 @@
-import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor"
+import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 
 const randomUser = () => ({
   username: `testuser${Date.now()}`,
   email: `test${Date.now()}@mail.com`,
-  password: 'Test1234!'
+  password: 'Test1234!',
 });
 
 let user;
 
 Given('el usuario navega a la página de registro', () => {
+  cy.intercept('GET', '**/EstacionesTerrestres/**', {
+    fixture: '../fuel_prices.json', // Mock de la respuesta de la API
+  }).as('getFuelPrices');
+
   user = randomUser();
   cy.visit('/registro').wait(5000);
 });
@@ -24,10 +28,16 @@ When('envía el formulario de registro', () => {
 });
 
 Then('ve un mensaje de confirmación de registro', () => {
-  cy.contains(/usuario registrado correctamente|registro exitoso/i, { timeout: 5000 }).should('exist');
+  cy.contains(/usuario registrado correctamente|registro exitoso/i, {
+    timeout: 5000,
+  }).should('exist');
 });
 
 Given('el usuario navega a la página de login', () => {
+  cy.intercept('GET', '**/EstacionesTerrestres/**', {
+    fixture: '../fuel_prices.json', // Mock de la respuesta de la API
+  }).as('getFuelPrices');
+
   cy.visit('/login');
 });
 

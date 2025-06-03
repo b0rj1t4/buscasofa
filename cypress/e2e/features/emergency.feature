@@ -9,5 +9,5 @@ Feature: Emergency Gas Stations
 
   Scenario: User sees geolocated stations
     Given el usuario permite geolocalizacion
-    When abre la pagina de emergencia
+    When abre la pagina de emergencia con geolocalizacion
     Then deberia ver gasolineras cercanas a mi posicion
